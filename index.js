@@ -207,6 +207,22 @@ AFRAME.registerComponent('loader-3dtiles', {
   },
   _initTileset: async function () {
     const pointCloudColoring = this._resolvePointcloudColoring(this.data.pointcloudColoring);
+    const manager = new THREE.LoadingManager();
+    manager.onStart = function (url, itemsLoaded, itemsTotal) {
+      console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+    };
+
+    manager.onLoad = function () {
+      console.log('Loading complete!');
+    };
+
+    manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+      console.log('Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+    };
+
+    manager.onError = function (url) {
+      console.log('There was an error loading ' + url);
+    };
     return Loader3DTiles.load({
       url: this.data.url,
       renderer: this.el.sceneEl.renderer,
@@ -223,7 +239,11 @@ AFRAME.registerComponent('loader-3dtiles', {
         wireframe: this.data.wireframe,
         updateTransforms: true
       },
-      viewport: this.viewport
+      viewport: this.viewport,
+      loadingManager: manager,
+      onProgress: function (tilesLoaded, tilesTotal) {
+        console.log(tilesLoaded, tilesTotal);
+      }
     });
   },
   _initStats: function () {
