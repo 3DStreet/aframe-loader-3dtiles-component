@@ -121,6 +121,14 @@ AFRAME.registerComponent('loader-3dtiles', {
       // emit play event to start load tiles in aframe-inspector
       this.play();
     }
+
+    if ((this.data.lat && this.data.long) || this.data.height) {
+      this.runtime.orientToGeocoord({
+        lat: Number(this.data.lat),
+        long: Number(this.data.long),
+        height: Number(this.data.height)
+      });
+    }
   },
   onWindowResize: function () {
     const sceneEl = this.el.sceneEl;
@@ -208,21 +216,21 @@ AFRAME.registerComponent('loader-3dtiles', {
   _initTileset: async function () {
     const pointCloudColoring = this._resolvePointcloudColoring(this.data.pointcloudColoring);
     const manager = new THREE.LoadingManager();
-    manager.onStart = function (url, itemsLoaded, itemsTotal) {
-      console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
-    };
+    // manager.onStart = function (url, itemsLoaded, itemsTotal) {
+    //   console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+    // };
 
-    manager.onLoad = function () {
-      console.log('Loading complete!');
-    };
+    // manager.onLoad = function () {
+    //   console.log('Loading complete!');
+    // };
 
-    manager.onProgress = function (url, itemsLoaded, itemsTotal) {
-      console.log('Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
-    };
+    // manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+    //   console.log('Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+    // };
 
-    manager.onError = function (url) {
-      console.log('There was an error loading ' + url);
-    };
+    // manager.onError = function (url) {
+    //   console.log('There was an error loading ' + url);
+    // };
     return Loader3DTiles.load({
       url: this.data.url,
       renderer: this.el.sceneEl.renderer,
@@ -240,10 +248,10 @@ AFRAME.registerComponent('loader-3dtiles', {
         updateTransforms: true
       },
       viewport: this.viewport,
-      loadingManager: manager,
-      onProgress: function (tilesLoaded, tilesTotal) {
-        console.log(tilesLoaded, tilesTotal);
-      }
+      loadingManager: manager
+      // onProgress: function (tilesLoaded, tilesTotal) {
+      //   console.log(tilesLoaded, tilesTotal);
+      // }
     });
   },
   _initStats: function () {
