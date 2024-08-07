@@ -121,6 +121,14 @@ AFRAME.registerComponent('loader-3dtiles', {
       // emit play event to start load tiles in aframe-inspector
       this.play();
     }
+
+    if ((this.data.lat && this.data.long) || this.data.height) {
+      this.runtime.orientToGeocoord({
+        lat: Number(this.data.lat),
+        long: Number(this.data.long),
+        height: Number(this.data.height)
+      });
+    }
   },
   onWindowResize: function () {
     const sceneEl = this.el.sceneEl;
@@ -207,6 +215,7 @@ AFRAME.registerComponent('loader-3dtiles', {
   },
   _initTileset: async function () {
     const pointCloudColoring = this._resolvePointcloudColoring(this.data.pointcloudColoring);
+
     return Loader3DTiles.load({
       url: this.data.url,
       renderer: this.el.sceneEl.renderer,
