@@ -12,6 +12,43 @@
   <!-- 3dstreet -->
   <script src="https://unpkg.com/3dstreet@0.4.14/dist/aframe-street-component.js"></script>
 
+  <script>
+    AFRAME.registerComponent('clipping-planes', {
+      init: function () {
+        this.clipPlanes = [
+          new THREE.Plane(new THREE.Vector3(1, 0, 0), -50),
+          new THREE.Plane(new THREE.Vector3(-1, 0, 0), -50),
+          new THREE.Plane(new THREE.Vector3(0, 0, -1), -10),
+          new THREE.Plane(new THREE.Vector3(0, 0, 1), -10),
+        ];
+        // Run once on init
+        this.applyClippingPlanes();
+        // set localClippingEnabled true on scene renderer
+        this.el.sceneEl.renderer.localClippingEnabled = true;
+      },
+
+      tick: function () {
+        this.applyClippingPlanes();
+      },
+
+      applyClippingPlanes: function () {
+        this.el.object3D.traverse((obj) => {
+          if (obj.type === "Mesh") {
+            if (Array.isArray(obj.material)) {
+              obj.material.forEach((material) => {
+                material.clippingPlanes = this.clipPlanes;
+                material.clipIntersection = true;
+              });
+            } else {
+              obj.material.clippingPlanes = this.clipPlanes;
+              obj.material.clipIntersection = true;
+            }
+          }
+        });
+      }
+    });
+  </script>
+
   <!-- vr teleport�controls -->
   <script src="https://cdn.jsdelivr.net/npm/aframe-blink-controls@0.4.3/dist/aframe-blink-controls.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
@@ -160,7 +197,7 @@
           googleApiKey: AIzaSyAQshwLVKTpwTfPJxFEkEzOdP_cgmixTCQ;
           maximumSSE: 48;
           maximumMem: 400;
-          copyrightEl: #copyright;">
+          copyrightEl: #copyright;" clipping-planes>
       </a-entity>
 
     </a-entity>
