@@ -16,6 +16,16 @@
   <script src="https://cdn.jsdelivr.net/npm/aframe-blink-controls@0.4.3/dist/aframe-blink-controls.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
 
+  <script>
+    AFRAME.registerComponent('event-tester', {
+      init: function () {
+        this.el.addEventListener('contentPostProcess', (e) => {
+          console.log('mesh', e.detail.mesh);
+        })
+      }
+    });
+
+  </script>
   <style>
     #guide {
       position: fixed;
@@ -160,7 +170,10 @@
           googleApiKey: AIzaSyAQshwLVKTpwTfPJxFEkEzOdP_cgmixTCQ;
           maximumSSE: 48;
           maximumMem: 400;
-          copyrightEl: #copyright;">
+          copyrightEl: #copyright;
+          emitPostProcess: true;"
+          event-tester=""
+          >
       </a-entity>
 
     </a-entity>

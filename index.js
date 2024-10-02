@@ -33,7 +33,8 @@ AFRAME.registerComponent('loader-3dtiles', {
     lat: { type: 'number' },
     long: { type: 'number' },
     height: { type: 'number', default: 0 },
-    copyrightEl: { type: 'selector' }
+    copyrightEl: { type: 'selector' },
+    emitPostProcess: { type: 'boolean', default: false }
   },
   init: async function () {
     const sceneEl = this.el.sceneEl;
@@ -215,7 +216,14 @@ AFRAME.registerComponent('loader-3dtiles', {
   },
   _initTileset: async function () {
     const pointCloudColoring = this._resolvePointcloudColoring(this.data.pointcloudColoring);
-
+    // optionally pass callback to LoaderOptions.contentPostProcess
+    let postProcessCallback;
+    if (this.data.emitPostProcess) {
+      const thatEl = this.el;
+      postProcessCallback = function (mesh, cloud) {
+        thatEl.emit('contentPostProcess', { mesh: mesh, cloud: cloud });
+      };
+    }
     return Loader3DTiles.load({
       url: this.data.url,
       renderer: this.el.sceneEl.renderer,
@@ -230,7 +238,8 @@ AFRAME.registerComponent('loader-3dtiles', {
         pointCloudColoring: pointCloudColoring,
         viewDistanceScale: this.data.distanceScale,
         wireframe: this.data.wireframe,
-        updateTransforms: true
+        updateTransforms: true,
+        contentPostProcess: postProcessCallback
       },
       viewport: this.viewport
     });
